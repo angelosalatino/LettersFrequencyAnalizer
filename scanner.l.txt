@@ -1,0 +1,79 @@
+/*Definizioni*/
+
+%{
+	#include "mystruct.h"
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+	
+	int intero;
+	struct vect a[26];
+	
+	
+%}
+
+/* %option main */
+%option noyywrap
+
+NUMBER [0-9]
+STRING [a-zA-Z]
+
+%%
+
+	/*Definizioni delle azioni*/
+
+{STRING}		{	
+				intero = *(int *)strdup(yytext);//va a finire nella union
+				intero -=65;
+				if(intero>=32){
+				 intero -=32;
+				}
+				a[intero].elem++;
+				
+				printf("%s",yytext);
+			}
+			
+{NUMBER}+		{
+				intero=atoi(yytext);
+				printf("%s",yytext);
+			}
+
+
+.	{printf("%s",yytext);};//qualsiasi carattere!
+	
+
+
+%%
+
+/*Codice C utente*/
+int main(int argc,char **argv){
+	--argc;
+	 ++argv;
+	 //FILE *yyin;
+	 
+	 int i,value,j;
+	 	
+	 	value= 0;
+		
+		for ( i = 0; i < argc; i++)
+			 {
+			   yyin = fopen( argv[i] , "r" );
+			   if(yyin!=NULL)
+			   {
+			   	inizialize(&a);
+			   	printf("+-----------------------START SCANNING-----------------------+\n");
+			  	yylex();
+			  	printf("+------------------------END SCANNING------------------------+\n");
+				
+			  	printf("Calculating...\n");
+			  	calculate(&a);
+			  	print(&a);
+			  	
+	  			}
+	  			}
+	    
+
+	
+	 return 1;
+}
+
